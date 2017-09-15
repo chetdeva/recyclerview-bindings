@@ -1,0 +1,120 @@
+package com.fueled.recyclerviewbindings.databinding
+
+import android.databinding.BindingAdapter
+import android.graphics.drawable.Drawable
+import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
+import com.fueled.recyclerviewbindings.core.EndlessRecyclerViewScrollListener
+import com.fueled.recyclerviewbindings.core.OnLoadMoreListener
+import com.fueled.recyclerviewbindings.core.SpaceItemDecoration
+import com.fueled.recyclerviewbindings.widget.drag.DragItemTouchHelperCallback
+import com.fueled.recyclerviewbindings.widget.swipe.SwipeItemTouchHelperCallback
+
+/**
+ * Copyright (c) 2017 Fueled. All rights reserved.
+
+ * @author chetansachdeva on 15/09/17
+ */
+
+class BindingAdapter {
+
+    /**
+     * @param recyclerView  RecyclerView to bind to EndlessRecyclerViewScrollListener
+     * @param onLoadMoreListener    OnLoadMoreListener for onLoadMore when scrolled
+     */
+    @BindingAdapter(value = *arrayOf("visibleThreshold", "onLoadMore"), requireAll = false)
+    fun setEndlessScrollingListener(recyclerView: RecyclerView, visibleThreshold: Int, onLoadMoreListener: OnLoadMoreListener) {
+        val listener: EndlessRecyclerViewScrollListener = object : EndlessRecyclerViewScrollListener(visibleThreshold, recyclerView.layoutManager as LinearLayoutManager) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
+                onLoadMoreListener.onLoadMore(page)
+            }
+        }
+        recyclerView.addOnScrollListener(listener)
+    }
+
+    /**
+     * @param recyclerView  RecyclerView to bind to SpaceItemDecoration
+     * @param spaceInPx space in pixels
+     */
+    @BindingAdapter("spaceItemDecoration")
+    fun setSpaceItemDecoration(recyclerView: RecyclerView, spaceInPx: Float) {
+        if (spaceInPx != 0f) {
+            val itemDecoration = SpaceItemDecoration(spaceInPx.toInt(), true, false)
+            recyclerView.addItemDecoration(itemDecoration)
+        } else {
+            recyclerView.addItemDecoration(null)
+        }
+    }
+
+    /**
+     * @param recyclerView  RecyclerView to bind to DividerItemDecoration
+     * @param orientation 0 for LinearLayout.HORIZONTAL and 1 for LinearLayout.VERTICAL
+     */
+    @BindingAdapter("dividerItemDecoration")
+    fun setDividerItemDecoration(recyclerView: RecyclerView, orientation: Int) {
+        val itemDecoration = DividerItemDecoration(recyclerView.context, orientation)
+        recyclerView.addItemDecoration(itemDecoration)
+    }
+
+    /**
+     * Bind ItemTouchHelper.SimpleCallback with RecyclerView
+
+     * @param recyclerView      RecyclerView to bind to SwipeItemTouchHelperCallback
+     * @param swipeEnabled      enable/disable swipe
+     * @param drawableLeft      drawable shown when swiped left
+     * @param drawableRight     drawable shown when swiped right
+     * @param bgColorSwipeLeft  background color when swiped left
+     * @param bgColorSwipeRight background color when swiped right
+     * @param onItemSwipeLeft   OnItemSwipeListener for swiped left
+     * @param onItemSwipeRight  OnItemSwipeListener for swiped right
+     */
+    @BindingAdapter(value = *arrayOf("swipeEnabled", "drawableSwipeLeft", "drawableSwipeRight", "bgColorSwipeLeft", "bgColorSwipeRight", "onItemSwipeLeft", "onItemSwipeRight"), requireAll = false)
+    fun setItemSwipeToRecyclerView(recyclerView: RecyclerView, swipeEnabled: Boolean, drawableLeft: Drawable, drawableRight: Drawable, bgColorSwipeLeft: Int, bgColorSwipeRight: Int,
+                                   onItemSwipeLeft: SwipeItemTouchHelperCallback.OnItemSwipeListener, onItemSwipeRight: SwipeItemTouchHelperCallback.OnItemSwipeListener) {
+
+        val swipeCallback = SwipeItemTouchHelperCallback.Builder(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+                .bgColorSwipeLeft(bgColorSwipeLeft)
+                .bgColorSwipeRight(bgColorSwipeRight)
+                .drawableLeft(drawableLeft)
+                .drawableRight(drawableRight)
+                .setSwipeEnabled(swipeEnabled)
+                .onItemSwipeLeftListener(onItemSwipeLeft)
+                .onItemSwipeRightListener(onItemSwipeRight)
+                .build()
+
+        val itemTouchHelper = ItemTouchHelper(swipeCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+    }
+
+    /**
+     * Bind ItemTouchHelper.SimpleCallback with RecyclerView
+
+     * @param recyclerView RecyclerView to bind to DragItemTouchHelperCallback
+     * @param dragEnabled  enable/disable drag
+     * @param onItemDrag   OnItemDragListener for dragged
+     */
+    @BindingAdapter(value = *arrayOf("dragEnabled", "onItemDrag"), requireAll = false)
+    fun setItemDragToRecyclerView(recyclerView: RecyclerView, dragEnabled: Boolean,
+                                  onItemDrag: DragItemTouchHelperCallback.OnItemDragListener) {
+
+        val dragCallback = DragItemTouchHelperCallback.Builder(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0)
+                .setDragEnabled(dragEnabled)
+                .onItemDragListener(onItemDrag)
+                .build()
+
+        val itemTouchHelper = ItemTouchHelper(dragCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+    }
+
+    /**
+     * @param swipeRefreshLayout Bind swipeRefreshLayout with OnRefreshListener
+     * @param onRefresh Listener for onRefresh when swiped
+     */
+    @BindingAdapter("onRefresh")
+    fun setOnSwipeRefreshListener(swipeRefreshLayout: SwipeRefreshLayout, onRefresh: Runnable) {
+        swipeRefreshLayout.setOnRefreshListener { onRefresh.run() }
+    }
+}

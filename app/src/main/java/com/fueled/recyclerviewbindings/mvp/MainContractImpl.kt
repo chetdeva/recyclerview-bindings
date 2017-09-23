@@ -27,13 +27,18 @@ class MainContractImpl : MainContract {
      * iterate from start to end where end = start + page_size
      */
     private fun getItems(page: Int): List<User> {
-        return (getStartIndex(page)..page * MainContract.PAGE_SIZE - 1)
-                .map {
-                    val user = User()
-                    user.id = it
-                    user.name = "User " + it
-                    user
-                }
+        return (getStartIndex(page) until page * MainContract.PAGE_SIZE)
+                .map { mapUser(it) }
+    }
+
+    /**
+     * map user with id
+     */
+    private fun mapUser(id: Int): User {
+        val user = User()
+        user.id = id
+        user.name = "User " + id
+        return user
     }
 
     /**

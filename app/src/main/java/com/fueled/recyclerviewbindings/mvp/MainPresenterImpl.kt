@@ -13,9 +13,8 @@ import io.reactivex.processors.PublishProcessor
 class MainPresenterImpl(private val view: MainContract.View) : MainContract.Presenter {
 
     private val contract: MainContract
-    private var loading: Boolean = false
     private var currentPage: Int = 0
-    private var disposables: CompositeDisposable
+    private val disposables: CompositeDisposable
     private lateinit var paginator: PublishProcessor<Int>
 
     init {
@@ -34,15 +33,15 @@ class MainPresenterImpl(private val view: MainContract.View) : MainContract.Pres
         paginator = PublishProcessor.create()
 
         val d = paginator.onBackpressureDrop()
-                .doOnNext { loading = view.showProgress() }
+                .doOnNext { view.showProgress() }
                 .concatMap { contract.getItemsFromServer(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    loading = view.hideProgress()
+                    view.hideProgress()
                     view.showItems(it)
                     currentPage++
                 }, {
-                    loading = view.hideProgress()
+                    view.hideProgress()
                     view.showError(it.localizedMessage)
                 })
 
@@ -56,7 +55,7 @@ class MainPresenterImpl(private val view: MainContract.View) : MainContract.Pres
      * @param page current page (not used)
      */
     override fun onLoadMore(page: Int) {
-        if (loading) return
+        println("page: " + page)
         paginator.onNext(currentPage)
     }
 

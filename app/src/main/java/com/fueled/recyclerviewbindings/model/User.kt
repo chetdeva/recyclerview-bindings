@@ -11,6 +11,7 @@ import com.fueled.recyclerviewbindings.BR
  */
 
 class User : BaseObservable() {
+
     @get:Bindable
     var id: Int = 0
         set(id) {

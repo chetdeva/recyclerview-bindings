@@ -1,6 +1,5 @@
 package com.fueled.recyclerviewbindings.mvp
 
-import com.fueled.recyclerviewbindings.core.OnLoadMoreListener
 import com.fueled.recyclerviewbindings.model.User
 import io.reactivex.Flowable
 
@@ -14,16 +13,18 @@ interface MainContract {
 
     fun getItemsFromServer(page: Int): Flowable<List<User>>
 
-    interface Presenter : OnLoadMoreListener {
+    interface Presenter {
         fun initialize()
+
+        fun onLoadMore(page: Int)
 
         fun terminate()
     }
 
     interface View {
-        fun showProgress(): Boolean
+        fun showProgress()
 
-        fun hideProgress(): Boolean
+        fun hideProgress()
 
         fun showItems(items: List<User>)
 

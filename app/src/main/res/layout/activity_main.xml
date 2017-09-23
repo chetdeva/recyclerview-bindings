@@ -7,8 +7,12 @@
     <data>
 
         <variable
-            name="presenter"
-            type="com.fueled.recyclerviewbindings.mvp.MainContract.Presenter" />
+            name="model"
+            type="com.fueled.recyclerviewbindings.model.MainModel" />
+
+        <variable
+            name="handler"
+            type="com.fueled.recyclerviewbindings.mvp.MainHandler" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -20,7 +24,7 @@
             android:id="@+id/srl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            bind:onRefresh="@{() -> presenter.initialize()}">
+            bind:onPulledToRefresh="@{() -> handler.onPulledToRefresh()}">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv"
@@ -28,9 +32,10 @@
                 android:layout_height="match_parent"
                 android:background="@color/grey"
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-                bind:onLoadMore="@{(page) -> presenter.onLoadMore(page)}"
-                bind:spaceItemDecoration="@{@dimen/space_low}"
-                bind:visibleThreshold="@{7}"
+                bind:onScrolledToBottom="@{(page) -> handler.onScrolledToBottom(page)}"
+                bind:resetLoadingState="@{model.resetLoadingState}"
+                bind:spaceItemDecoration="@{@dimen/space_very_low}"
+                bind:visibleThreshold="@{model.visibleThreshold}"
                 tools:listitem="@layout/item_main" />
 
         </android.support.v4.widget.SwipeRefreshLayout>

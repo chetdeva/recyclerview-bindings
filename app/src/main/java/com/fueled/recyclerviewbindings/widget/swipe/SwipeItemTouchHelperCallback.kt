@@ -39,14 +39,9 @@ class SwipeItemTouchHelperCallback private constructor(dragDirs: Int, swipeDirs:
         paint.color = color
     }
 
+    override fun isItemViewSwipeEnabled() = swipeEnabled
 
-    override fun isItemViewSwipeEnabled(): Boolean {
-        return swipeEnabled
-    }
-
-    override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-        return false
-    }
+    override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder) = false
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         val position = viewHolder.adapterPosition
@@ -123,13 +118,11 @@ class SwipeItemTouchHelperCallback private constructor(dragDirs: Int, swipeDirs:
             return this
         }
 
-        fun setSwipeEnabled(value: Boolean): Builder {
+        fun swipeEnabled(value: Boolean): Builder {
             swipeEnabled = value
             return this
         }
 
-        fun build(): SwipeItemTouchHelperCallback {
-            return SwipeItemTouchHelperCallback(this)
-        }
+        fun build() = SwipeItemTouchHelperCallback(this)
     }
 }

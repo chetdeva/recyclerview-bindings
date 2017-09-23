@@ -3,12 +3,9 @@ package com.fueled.recyclerviewbindings.databinding
 import android.databinding.BindingAdapter
 import android.graphics.drawable.Drawable
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.*
 import android.support.v7.widget.helper.ItemTouchHelper
-import com.fueled.recyclerviewbindings.core.EndlessRecyclerViewScrollListener
-import com.fueled.recyclerviewbindings.core.OnLoadMoreListener
+import com.fueled.recyclerviewbindings.core.RecyclerViewScrollCallback
 import com.fueled.recyclerviewbindings.core.SpaceItemDecoration
 import com.fueled.recyclerviewbindings.widget.drag.DragItemTouchHelperCallback
 import com.fueled.recyclerviewbindings.widget.swipe.SwipeItemTouchHelperCallback
@@ -22,18 +19,29 @@ import com.fueled.recyclerviewbindings.widget.swipe.SwipeItemTouchHelperCallback
 class BindingAdapter {
 
     /**
-     * @param recyclerView  RecyclerView to bind to EndlessRecyclerViewScrollListener
-     * @param onLoadMoreListener    OnLoadMoreListener for onLoadMore when scrolled
+     * @param recyclerView  RecyclerView to bind to RecyclerViewScrollCallback
+     * @param onScrolledListener    OnScrolledListener for RecyclerView scrolled
      */
-    @BindingAdapter(value = *arrayOf("visibleThreshold", "onLoadMore"), requireAll = false)
-    fun setEndlessScrollingListener(recyclerView: RecyclerView, visibleThreshold: Int, onLoadMoreListener: OnLoadMoreListener) {
-        val listener: EndlessRecyclerViewScrollListener = object : EndlessRecyclerViewScrollListener(visibleThreshold, recyclerView.layoutManager as LinearLayoutManager) {
-            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
-                onLoadMoreListener.onLoadMore(page)
-            }
-        }
-        recyclerView.addOnScrollListener(listener)
+    @BindingAdapter(value = *arrayOf("visibleThreshold", "resetLoadingState", "onScrolledToBottom"), requireAll = false)
+    fun setRecyclerViewScrollCallback(recyclerView: RecyclerView, visibleThreshold: Int, resetLoadingState: Boolean,
+                                      onScrolledToBottom: RecyclerViewScrollCallback.OnScrolledListener) {
+
+        val callback = RecyclerViewScrollCallback
+                .Builder(getVisibleThreshold(recyclerView.layoutManager, visibleThreshold), recyclerView.layoutManager)
+                .resetLoadingState(resetLoadingState)
+                .onScrolledToBottom(onScrolledToBottom)
+                .build()
+
+        recyclerView.addOnScrollListener(callback)
     }
+
+    private fun getVisibleThreshold(layoutManager: RecyclerView.LayoutManager, visibleThreshold: Int) =
+            when (layoutManager) {
+                is LinearLayoutManager -> visibleThreshold
+                is GridLayoutManager -> visibleThreshold * layoutManager.spanCount
+                is StaggeredGridLayoutManager -> visibleThreshold * layoutManager.spanCount
+                else -> visibleThreshold
+            }
 
     /**
      * @param recyclerView  RecyclerView to bind to SpaceItemDecoration
@@ -68,19 +76,20 @@ class BindingAdapter {
      * @param drawableRight     drawable shown when swiped right
      * @param bgColorSwipeLeft  background color when swiped left
      * @param bgColorSwipeRight background color when swiped right
-     * @param onItemSwipeLeft   OnItemSwipeListener for swiped left
-     * @param onItemSwipeRight  OnItemSwipeListener for swiped right
+     * @param onItemSwipeLeft   OnItemSwipeListener for Item swiped left
+     * @param onItemSwipeRight  OnItemSwipeListener for Item swiped right
      */
     @BindingAdapter(value = *arrayOf("swipeEnabled", "drawableSwipeLeft", "drawableSwipeRight", "bgColorSwipeLeft", "bgColorSwipeRight", "onItemSwipeLeft", "onItemSwipeRight"), requireAll = false)
     fun setItemSwipeToRecyclerView(recyclerView: RecyclerView, swipeEnabled: Boolean, drawableLeft: Drawable, drawableRight: Drawable, bgColorSwipeLeft: Int, bgColorSwipeRight: Int,
                                    onItemSwipeLeft: SwipeItemTouchHelperCallback.OnItemSwipeListener, onItemSwipeRight: SwipeItemTouchHelperCallback.OnItemSwipeListener) {
 
-        val swipeCallback = SwipeItemTouchHelperCallback.Builder(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+        val swipeCallback = SwipeItemTouchHelperCallback
+                .Builder(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
                 .bgColorSwipeLeft(bgColorSwipeLeft)
                 .bgColorSwipeRight(bgColorSwipeRight)
                 .drawableLeft(drawableLeft)
                 .drawableRight(drawableRight)
-                .setSwipeEnabled(swipeEnabled)
+                .swipeEnabled(swipeEnabled)
                 .onItemSwipeLeftListener(onItemSwipeLeft)
                 .onItemSwipeRightListener(onItemSwipeRight)
                 .build()
@@ -94,14 +103,15 @@ class BindingAdapter {
 
      * @param recyclerView RecyclerView to bind to DragItemTouchHelperCallback
      * @param dragEnabled  enable/disable drag
-     * @param onItemDrag   OnItemDragListener for dragged
+     * @param onItemDrag   OnItemDragListener for Item dragged
      */
     @BindingAdapter(value = *arrayOf("dragEnabled", "onItemDrag"), requireAll = false)
     fun setItemDragToRecyclerView(recyclerView: RecyclerView, dragEnabled: Boolean,
                                   onItemDrag: DragItemTouchHelperCallback.OnItemDragListener) {
 
-        val dragCallback = DragItemTouchHelperCallback.Builder(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0)
-                .setDragEnabled(dragEnabled)
+        val dragCallback = DragItemTouchHelperCallback
+                .Builder(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0)
+                .dragEnabled(dragEnabled)
                 .onItemDragListener(onItemDrag)
                 .build()
 
@@ -113,8 +123,8 @@ class BindingAdapter {
      * @param swipeRefreshLayout Bind swipeRefreshLayout with OnRefreshListener
      * @param onRefresh Listener for onRefresh when swiped
      */
-    @BindingAdapter("onRefresh")
-    fun setOnSwipeRefreshListener(swipeRefreshLayout: SwipeRefreshLayout, onRefresh: Runnable) {
-        swipeRefreshLayout.setOnRefreshListener { onRefresh.run() }
+    @BindingAdapter("onPulledToRefresh")
+    fun setOnSwipeRefreshListener(swipeRefreshLayout: SwipeRefreshLayout, onPulledToRefresh: Runnable) {
+        swipeRefreshLayout.setOnRefreshListener { onPulledToRefresh.run() }
     }
 }

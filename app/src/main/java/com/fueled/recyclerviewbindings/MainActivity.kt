@@ -8,16 +8,20 @@ import com.fueled.recyclerviewbindings.databinding.BindingComponent
 
 import com.fueled.recyclerviewbindings.adapter.RVAdapter
 import com.fueled.recyclerviewbindings.databinding.ActivityMainBinding
+import com.fueled.recyclerviewbindings.model.MainModel
 import com.fueled.recyclerviewbindings.model.User
 import com.fueled.recyclerviewbindings.mvp.MainContract
+import com.fueled.recyclerviewbindings.mvp.MainHandler
 import com.fueled.recyclerviewbindings.mvp.MainPresenterImpl
 import com.fueled.recyclerviewbindings.util.toast
 
 import java.util.ArrayList
 
-class MainActivity : AppCompatActivity(), MainContract.View {
+class MainActivity : AppCompatActivity(), MainHandler, MainContract.View {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var model: MainModel
+
     private lateinit var presenter: MainContract.Presenter
 
     private lateinit var adapter: RVAdapter
@@ -26,10 +30,20 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main, BindingComponent())
+        setBindings()
         setRecyclerView()
 
         presenter = MainPresenterImpl(this)
-        binding.presenter = presenter
+    }
+
+    /**
+     * set bindings for model and handler
+     */
+    private fun setBindings() {
+        model = MainModel()
+        model.visibleThreshold = 7
+        binding.model = model
+        binding.handler = this
     }
 
     /**
@@ -41,18 +55,34 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     /**
+     * called when pulled downwards
+     */
+    override fun onPulledToRefresh() {
+        model.resetLoadingState = true
+        presenter.initialize()
+    }
+
+    /**
+     * called when RecyclerView scrolled to bottom
+     */
+    override fun onScrolledToBottom(page: Int) {
+        if (model.loading) return
+        presenter.onLoadMore(page)
+    }
+
+    /**
      * show progress loader at bottom of list
      */
-    override fun showProgress(): Boolean {
+    override fun showProgress() {
         binding.rv.post { adapter.add(null) }
-        return true
+        model.loading = true
     }
 
     /**
      * remove progress loader at bottom of list
      * if list is refreshing, clear the list
      */
-    override fun hideProgress(): Boolean {
+    override fun hideProgress() {
         if (list.size > 0 && null == list[list.size - 1]) {
             adapter.remove(list.size - 1)
         }
@@ -60,7 +90,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
             list.clear()
             binding.srl.isRefreshing = false
         }
-        return false
+        model.loading = false
     }
 
     /**

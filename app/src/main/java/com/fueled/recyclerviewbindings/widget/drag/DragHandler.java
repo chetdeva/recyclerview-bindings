@@ -5,7 +5,5 @@ package com.fueled.recyclerviewbindings.widget.drag;
  */
 
 public interface DragHandler {
-
 	void onItemDragged(int indexFrom, int indexTo);
-
 }

@@ -11,6 +11,7 @@ import android.support.v7.widget.helper.ItemTouchHelper
  */
 
 class DragItemTouchHelperCallback private constructor(dragDirs: Int, swipeDirs: Int) : ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
+
     private var dragEnabled: Boolean = false
     private lateinit var onItemDragListener: OnItemDragListener
 
@@ -19,9 +20,7 @@ class DragItemTouchHelperCallback private constructor(dragDirs: Int, swipeDirs: 
         onItemDragListener = builder.onItemDragListener
     }
 
-    override fun isLongPressDragEnabled(): Boolean {
-        return dragEnabled
-    }
+    override fun isLongPressDragEnabled() = dragEnabled
 
     override fun onMove(recyclerView: RecyclerView, source: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
         if (source.itemViewType != target.itemViewType) {
@@ -59,23 +58,20 @@ class DragItemTouchHelperCallback private constructor(dragDirs: Int, swipeDirs: 
         internal lateinit var onItemDragListener: OnItemDragListener
         internal var dragEnabled: Boolean = false
 
-        fun onItemDragListener(`val`: OnItemDragListener): Builder {
-            onItemDragListener = `val`
+        fun onItemDragListener(value: OnItemDragListener): Builder {
+            onItemDragListener = value
             return this
         }
 
-        fun setDragEnabled(`val`: Boolean): Builder {
-            dragEnabled = `val`
+        fun dragEnabled(value: Boolean): Builder {
+            dragEnabled = value
             return this
         }
 
-        fun build(): DragItemTouchHelperCallback {
-            return DragItemTouchHelperCallback(this)
-        }
+        fun build() = DragItemTouchHelperCallback(this)
     }
 
     companion object {
-
         val ALPHA_FULL = 1.0f
     }
 }

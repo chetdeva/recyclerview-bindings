@@ -74,7 +74,7 @@ In your `XML` file
     </android.support.v4.widget.SwipeRefreshLayout>
 ```
 
-## Pagination using RxJava
+## Pagination using RxJava (using Subjects)
 
 ```kotlin
     /**

@@ -6,7 +6,7 @@ RecyclerViewBindings provides a wrapper class RecyclerViewScrollCallback which c
 
 ## How to Use
 
-```
+```kotlin
     val callback = RecyclerViewScrollCallback
             .Builder(visibleThreshold, recyclerView.layoutManager)
             .resetLoadingState(resetLoadingState)
@@ -20,7 +20,7 @@ RecyclerViewBindings provides a wrapper class RecyclerViewScrollCallback which c
 
 In your `Gradle`
 
-```
+```groovy
     dataBinding {
         enabled = true
     }
@@ -28,7 +28,7 @@ In your `Gradle`
 
 In your `BindingAdapter`
 
-```
+```kotlin
     /**
      * @param recyclerView  RecyclerView to bind to RecyclerViewScrollCallback
      * @param visibleThreshold  The minimum number of items to have below your current scroll position before loading more.
@@ -54,7 +54,7 @@ In your `BindingAdapter`
 
 In your `XML` file
 
-```
+```xml
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/srl"
         android:layout_width="match_parent"
@@ -78,7 +78,7 @@ In your `XML` file
 
 Add Android Support Design dependency to your gradle file.
 
-```
+```groovy
     dependencies {
         compile 'com.android.support:design:{latest_version}'
     }
@@ -91,4 +91,4 @@ Add Android Support Design dependency to your gradle file.
 
 ## Reference
 
-- [CodePath](https://github.com/codepath/android_guides/wiki/Endless-Scrolling-with-AdapterViews-and-RecyclerView)
+- [Endless Scrolling with AdapterViews and RecyclerView](https://github.com/codepath/android_guides/wiki/Endless-Scrolling-with-AdapterViews-and-RecyclerView)

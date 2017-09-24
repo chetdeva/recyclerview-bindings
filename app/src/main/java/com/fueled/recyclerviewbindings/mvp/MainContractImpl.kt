@@ -1,5 +1,6 @@
 package com.fueled.recyclerviewbindings.mvp
 
+import com.fueled.recyclerviewbindings.entity.User
 import java.util.concurrent.TimeUnit
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -15,7 +16,7 @@ class MainContractImpl : MainContract {
     /**
      * get items from server with a delay of MainContract.LOAD_DELAY_IN_MILLISECONDS
      */
-    override fun getItemsFromServer(page: Int): Flowable<List<Int>> {
+    override fun getItemsFromServer(page: Int): Flowable<List<User>> {
         return Flowable.just(page)
                 .observeOn(AndroidSchedulers.mainThread())
                 .delay(MainContract.LOAD_DELAY_IN_MILLISECONDS, TimeUnit.MILLISECONDS)
@@ -23,12 +24,14 @@ class MainContractImpl : MainContract {
     }
 
     /**
-     * iterate from start to end where end = start + page_size
+     * iterate from start to end where end = page * page_size
      */
-    private fun getItems(page: Int): List<Int> {
+    private fun getItems(page: Int): List<User> {
         return (getStartIndex(page) until page * MainContract.PAGE_SIZE)
-                .map { it }
+                .map { makeUser(it) }
     }
+
+    private fun makeUser(id: Int) = User(id, "User " + id)
 
     /**
      * deduce start index of page from page number

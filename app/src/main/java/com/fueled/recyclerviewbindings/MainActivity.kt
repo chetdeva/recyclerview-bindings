@@ -8,11 +8,13 @@ import com.fueled.recyclerviewbindings.databinding.BindingComponent
 
 import com.fueled.recyclerviewbindings.adapter.RVAdapter
 import com.fueled.recyclerviewbindings.databinding.ActivityMainBinding
+import com.fueled.recyclerviewbindings.entity.User
 import com.fueled.recyclerviewbindings.model.MainModel
 import com.fueled.recyclerviewbindings.model.UserModel
 import com.fueled.recyclerviewbindings.mvp.MainContract
 import com.fueled.recyclerviewbindings.mvp.MainHandler
 import com.fueled.recyclerviewbindings.mvp.MainPresenterImpl
+import com.fueled.recyclerviewbindings.util.Mapper
 import com.fueled.recyclerviewbindings.util.toast
 
 class MainActivity : AppCompatActivity(), MainHandler, MainContract.View {
@@ -94,20 +96,10 @@ class MainActivity : AppCompatActivity(), MainHandler, MainContract.View {
     /**
      * show items and add them to list
      */
-    override fun showItems(items: List<Int>) {
+    override fun showItems(items: List<User>) {
         val mappedItems = arrayListOf<UserModel>()
-        items.map { mappedItems.add(mapToUserModel(it)) }
+        items.map { mappedItems.add(Mapper.mapToUserModel(it)) }
         adapter.addAll(mappedItems)
-    }
-
-    /**
-     * map user with id
-     */
-    private fun mapToUserModel(id: Int): UserModel {
-        val user = UserModel()
-        user.id = id
-        user.name = "User " + id
-        return user
     }
 
     /**

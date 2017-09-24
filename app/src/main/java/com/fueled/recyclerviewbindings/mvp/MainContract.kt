@@ -1,5 +1,6 @@
 package com.fueled.recyclerviewbindings.mvp
 
+import com.fueled.recyclerviewbindings.entity.User
 import io.reactivex.Flowable
 
 /**
@@ -10,7 +11,7 @@ import io.reactivex.Flowable
 
 interface MainContract {
 
-    fun getItemsFromServer(page: Int): Flowable<List<Int>>
+    fun getItemsFromServer(page: Int): Flowable<List<User>>
 
     interface Presenter {
         fun initialize()
@@ -25,7 +26,7 @@ interface MainContract {
 
         fun hideProgress()
 
-        fun showItems(items: List<Int>)
+        fun showItems(items: List<User>)
 
         fun showError(message: String)
     }

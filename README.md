@@ -74,13 +74,54 @@ In your `XML` file
     </android.support.v4.widget.SwipeRefreshLayout>
 ```
 
+## Pagination using RxJava
+
+```kotlin
+    /**
+     * initialize all resources
+     * set current page to 1
+     * create paginator and subscribe to events
+     */
+    override fun initialize() {
+        currentPage = 1
+        paginator = PublishProcessor.create()
+
+        val d = paginator.onBackpressureDrop()
+                .doOnNext { view.showProgress() }
+                .concatMap { contract.getItemsFromServer(it) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    view.hideProgress()
+                    view.showItems(it)
+                    currentPage++
+                }, {
+                    view.hideProgress()
+                    view.showError(it.localizedMessage)
+                })
+
+        disposables.add(d)
+
+        onLoadMore(currentPage)
+    }
+
+    /**
+     * called when list is scrolled to its bottom
+     * @param page current page (not used)
+     */
+    override fun onLoadMore(page: Int) {
+        paginator.onNext(currentPage)
+    }
+```
+
 ## Library used
 
-Add Android Support Design dependency to your gradle file.
+Add Android Support Design, RxJava and RxAndroid dependency to your gradle file.
 
 ```groovy
     dependencies {
         compile 'com.android.support:design:{latest_version}'
+        compile 'io.reactivex.rxjava2:rxandroid:{latest_version}'
+        compile 'io.reactivex.rxjava2:rxjava:{latest_version}'
     }
 ```
 
@@ -91,4 +132,5 @@ Add Android Support Design dependency to your gradle file.
 
 ## Reference
 
-- [Endless Scrolling with AdapterViews and RecyclerView](https://github.com/codepath/android_guides/wiki/Endless-Scrolling-with-AdapterViews-and-RecyclerView)
+- [Endless Scrolling with AdapterViews and RecyclerView, CodePath](https://github.com/codepath/android_guides/wiki/Endless-Scrolling-with-AdapterViews-and-RecyclerView)
+- [Pagination with Rx (using Subjects), Kaushik Gopal](https://github.com/kaushikgopal/RxJava-Android-Samples#14-pagination-with-rx-using-subjects)

@@ -55,7 +55,6 @@ class MainPresenterImpl(private val view: MainContract.View) : MainContract.Pres
      * @param page current page (not used)
      */
     override fun onLoadMore(page: Int) {
-        println("page: " + page)
         paginator.onNext(currentPage)
     }
 

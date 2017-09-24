@@ -6,7 +6,7 @@
 
         <variable
             name="user"
-            type="com.fueled.recyclerviewbindings.model.User" />
+            type="com.fueled.recyclerviewbindings.model.UserModel" />
 
     </data>
 

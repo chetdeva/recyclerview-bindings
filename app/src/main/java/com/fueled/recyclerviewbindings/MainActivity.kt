@@ -9,13 +9,11 @@ import com.fueled.recyclerviewbindings.databinding.BindingComponent
 import com.fueled.recyclerviewbindings.adapter.RVAdapter
 import com.fueled.recyclerviewbindings.databinding.ActivityMainBinding
 import com.fueled.recyclerviewbindings.model.MainModel
-import com.fueled.recyclerviewbindings.model.User
+import com.fueled.recyclerviewbindings.model.UserModel
 import com.fueled.recyclerviewbindings.mvp.MainContract
 import com.fueled.recyclerviewbindings.mvp.MainHandler
 import com.fueled.recyclerviewbindings.mvp.MainPresenterImpl
 import com.fueled.recyclerviewbindings.util.toast
-
-import java.util.ArrayList
 
 class MainActivity : AppCompatActivity(), MainHandler, MainContract.View {
 
@@ -25,7 +23,7 @@ class MainActivity : AppCompatActivity(), MainHandler, MainContract.View {
     private lateinit var presenter: MainContract.Presenter
 
     private lateinit var adapter: RVAdapter
-    private val list = ArrayList<User?>()
+    private val list = arrayListOf<UserModel?>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,8 +94,20 @@ class MainActivity : AppCompatActivity(), MainHandler, MainContract.View {
     /**
      * show items and add them to list
      */
-    override fun showItems(items: List<User>) {
-        adapter.addAll(items)
+    override fun showItems(items: List<Int>) {
+        val mappedItems = arrayListOf<UserModel>()
+        items.map { mappedItems.add(mapToUserModel(it)) }
+        adapter.addAll(mappedItems)
+    }
+
+    /**
+     * map user with id
+     */
+    private fun mapToUserModel(id: Int): UserModel {
+        val user = UserModel()
+        user.id = id
+        user.name = "User " + id
+        return user
     }
 
     /**

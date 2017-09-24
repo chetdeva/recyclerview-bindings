@@ -8,14 +8,14 @@ import android.view.ViewGroup
 import com.fueled.recyclerviewbindings.R
 import com.fueled.recyclerviewbindings.databinding.ItemMainBinding
 import com.fueled.recyclerviewbindings.databinding.ItemProgressBinding
-import com.fueled.recyclerviewbindings.model.User
+import com.fueled.recyclerviewbindings.model.UserModel
 import com.fueled.recyclerviewbindings.util.inflate
 
 /**
  * @author chetansachdeva on 04/06/17
  */
 
-class RVAdapter(private val list: MutableList<User?>, private val listener: (User?) -> Unit) :
+class RVAdapter(private val list: MutableList<UserModel?>, private val listener: (UserModel?) -> Unit) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemViewType(position: Int): Int {
@@ -38,7 +38,7 @@ class RVAdapter(private val list: MutableList<User?>, private val listener: (Use
     /**
      * add list of items
      */
-    fun addAll(users: List<User>) {
+    fun addAll(users: List<UserModel>) {
         list.addAll(users)
         notifyItemInserted(list.size)
     }
@@ -46,7 +46,7 @@ class RVAdapter(private val list: MutableList<User?>, private val listener: (Use
     /**
      * add an item
      */
-    fun add(user: User?) {
+    fun add(user: UserModel?) {
         list.add(user)
         notifyItemInserted(list.size - 1)
     }
@@ -60,11 +60,11 @@ class RVAdapter(private val list: MutableList<User?>, private val listener: (Use
     }
 
     /**
-     * User ViewHolder
+     * UserModel ViewHolder
      */
     internal class VHUser(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val binding: ItemMainBinding = DataBindingUtil.bind(itemView)
-        fun bind(user: User?, listener: (User?) -> Unit) {
+        fun bind(user: UserModel?, listener: (UserModel?) -> Unit) {
             binding.user = user
             itemView.setOnClickListener { listener(user) }
         }

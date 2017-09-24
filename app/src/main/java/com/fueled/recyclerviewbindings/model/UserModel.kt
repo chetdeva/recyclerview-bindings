@@ -10,7 +10,7 @@ import com.fueled.recyclerviewbindings.BR
  * @author chetansachdeva on 15/09/17
  */
 
-class User : BaseObservable() {
+class UserModel : BaseObservable() {
 
     @get:Bindable
     var id: Int = 0

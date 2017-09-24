@@ -31,6 +31,9 @@ class MainContractImpl : MainContract {
                 .map { makeUser(it) }
     }
 
+    /**
+     * make user from id
+     */
     private fun makeUser(id: Int) = User(id, "User " + id)
 
     /**

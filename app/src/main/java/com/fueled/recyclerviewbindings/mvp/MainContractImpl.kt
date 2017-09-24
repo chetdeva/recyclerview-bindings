@@ -16,7 +16,7 @@ class MainContractImpl : MainContract {
     /**
      * get items from server with a delay of MainContract.LOAD_DELAY_IN_MILLISECONDS
      */
-    override fun getItemsFromServer(page: Int): Flowable<List<User>> {
+    override fun getUsersFromServer(page: Int): Flowable<List<User>> {
         return Flowable.just(page)
                 .observeOn(AndroidSchedulers.mainThread())
                 .delay(MainContract.LOAD_DELAY_IN_MILLISECONDS, TimeUnit.MILLISECONDS)

@@ -11,12 +11,12 @@ import io.reactivex.Flowable
 
 interface MainContract {
 
-    fun getItemsFromServer(page: Int): Flowable<List<User>>
+    fun getUsersFromServer(page: Int): Flowable<List<User>>
 
     interface Presenter {
         fun initialize()
 
-        fun onLoadMore(page: Int)
+        fun getUsers(page: Int)
 
         fun terminate()
     }

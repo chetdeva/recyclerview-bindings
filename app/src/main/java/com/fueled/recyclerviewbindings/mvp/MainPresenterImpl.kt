@@ -34,7 +34,7 @@ class MainPresenterImpl(private val view: MainContract.View) : MainContract.Pres
 
         val d = paginator.onBackpressureDrop()
                 .doOnNext { view.showProgress() }
-                .concatMap { contract.getItemsFromServer(it) }
+                .concatMap { contract.getUsersFromServer(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     view.hideProgress()
@@ -47,14 +47,14 @@ class MainPresenterImpl(private val view: MainContract.View) : MainContract.Pres
 
         disposables.add(d)
 
-        onLoadMore(currentPage)
+        getUsers(currentPage)
     }
 
     /**
      * called when list is scrolled to its bottom
      * @param page current page (not used)
      */
-    override fun onLoadMore(page: Int) {
+    override fun getUsers(page: Int) {
         paginator.onNext(currentPage)
     }
 

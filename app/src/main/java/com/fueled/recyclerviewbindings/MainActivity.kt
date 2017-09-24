@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), MainHandler, MainContract.View {
      */
     override fun onScrolledToBottom(page: Int) {
         if (model.loading) return
-        presenter.onLoadMore(page)
+        presenter.getUsers(page)
     }
 
     /**

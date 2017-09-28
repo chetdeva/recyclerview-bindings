@@ -12,12 +12,11 @@ import com.fueled.recyclerviewbindings.entity.User
 import com.fueled.recyclerviewbindings.model.MainModel
 import com.fueled.recyclerviewbindings.model.UserModel
 import com.fueled.recyclerviewbindings.mvp.MainContract
-import com.fueled.recyclerviewbindings.mvp.MainHandler
 import com.fueled.recyclerviewbindings.mvp.MainPresenterImpl
 import com.fueled.recyclerviewbindings.util.Mapper
 import com.fueled.recyclerviewbindings.util.toast
 
-class MainActivity : AppCompatActivity(), MainHandler, MainContract.View {
+class MainActivity : AppCompatActivity(), MainContract.View {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var model: MainModel
@@ -34,6 +33,7 @@ class MainActivity : AppCompatActivity(), MainHandler, MainContract.View {
         setRecyclerView()
 
         presenter = MainPresenterImpl(this)
+        binding.presenter = presenter
     }
 
     /**
@@ -43,7 +43,6 @@ class MainActivity : AppCompatActivity(), MainHandler, MainContract.View {
         model = MainModel()
         model.visibleThreshold = 7
         binding.model = model
-        binding.handler = this
     }
 
     /**
@@ -55,48 +54,33 @@ class MainActivity : AppCompatActivity(), MainHandler, MainContract.View {
     }
 
     /**
-     * called when pulled downwards
-     */
-    override fun onPulledToRefresh() {
-        model.resetLoadingState = true
-        presenter.initialize()
-    }
-
-    /**
-     * called when RecyclerView scrolled to bottom
-     */
-    override fun onScrolledToBottom(page: Int) {
-        if (model.loading) return
-        presenter.getUsers(page)
-    }
-
-    /**
      * show progress loader at bottom of list
      */
-    override fun showProgress() {
+    override fun showProgress(): Boolean {
         binding.rv.post { adapter.add(null) }
-        model.loading = true
+        return true
     }
 
     /**
      * remove progress loader at bottom of list
      * if list is refreshing, clear the list
      */
-    override fun hideProgress() {
+    override fun hideProgress(): Boolean {
         if (list.size > 0 && null == list[list.size - 1]) {
             adapter.remove(list.size - 1)
         }
-        if (binding.srl.isRefreshing) {
-            list.clear()
-            binding.srl.isRefreshing = false
-        }
-        model.loading = false
+        return  false
     }
 
     /**
      * show items and add them to list
      */
     override fun showItems(items: List<User>) {
+        if (binding.srl.isRefreshing) {
+            model.resetLoadingState = true
+            adapter.clear()
+            binding.srl.isRefreshing = false
+        }
         val mappedItems = arrayListOf<UserModel>()
         items.map { mappedItems.add(Mapper.mapToUserModel(it)) }
         adapter.addAll(mappedItems)

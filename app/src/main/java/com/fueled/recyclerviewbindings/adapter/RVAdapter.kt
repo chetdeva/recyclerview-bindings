@@ -58,6 +58,13 @@ class RVAdapter(private val list: MutableList<UserModel?>, private val listener:
         list.removeAt(position)
         notifyItemRemoved(list.size)
     }
+    /**
+     * clear all items
+     */
+    fun clear() {
+        list.clear()
+        notifyDataSetChanged()
+    }
 
     /**
      * UserModel ViewHolder

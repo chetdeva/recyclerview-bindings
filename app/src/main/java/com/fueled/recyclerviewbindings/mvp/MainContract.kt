@@ -16,15 +16,15 @@ interface MainContract {
     interface Presenter {
         fun initialize()
 
-        fun getUsers(page: Int)
+        fun onLoadMore(page: Int)
 
         fun terminate()
     }
 
     interface View {
-        fun showProgress()
+        fun showProgress(): Boolean
 
-        fun hideProgress()
+        fun hideProgress(): Boolean
 
         fun showItems(items: List<User>)
 

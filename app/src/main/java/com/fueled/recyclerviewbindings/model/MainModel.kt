@@ -14,13 +14,6 @@ import com.fueled.recyclerviewbindings.BR
 class MainModel : BaseObservable() {
 
     @get:Bindable
-    var loading: Boolean = false
-        set(loading) {
-            field = loading
-            notifyPropertyChanged(BR.loading)
-        }
-
-    @get:Bindable
     var resetLoadingState: Boolean = false
         set(resetLoadingState) {
             field = resetLoadingState

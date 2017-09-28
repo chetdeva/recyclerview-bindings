@@ -34,6 +34,7 @@ class BindingAdapter {
                 .onScrolledToBottom(onScrolledToBottom)
                 .build()
 
+        recyclerView.clearOnScrollListeners()
         recyclerView.addOnScrollListener(callback)
     }
 

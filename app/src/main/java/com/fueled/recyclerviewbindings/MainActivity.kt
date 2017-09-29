@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
             binding.srl.isRefreshing = false    // hide pull to refresh
             model.resetLoadingState = true      // reset loading state and callback
         }
-        return  false
+        return false
     }
 
     /**

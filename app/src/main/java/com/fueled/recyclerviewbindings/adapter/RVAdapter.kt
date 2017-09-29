@@ -36,15 +36,15 @@ class RVAdapter(private val list: MutableList<UserModel?>, private val listener:
     override fun getItemCount() = list.size
 
     /**
-     * add list of items
+     * add list of items and notify
      */
     fun addAll(users: List<UserModel>) {
         list.addAll(users)
-        notifyItemInserted(list.size)
+        notifyItemRangeChanged(users.size, list.size - 1)
     }
 
     /**
-     * add an item
+     * add an item and notify
      */
     fun add(user: UserModel?) {
         list.add(user)
@@ -52,14 +52,15 @@ class RVAdapter(private val list: MutableList<UserModel?>, private val listener:
     }
 
     /**
-     * remove an item
+     * remove an item and notify
      */
     fun remove(position: Int) {
         list.removeAt(position)
         notifyItemRemoved(list.size)
     }
+
     /**
-     * clear all items
+     * clear all items and notify
      */
     fun clear() {
         list.clear()

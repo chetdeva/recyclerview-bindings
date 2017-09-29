@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
      * show progress loader at bottom of list
      */
     override fun showProgress(): Boolean {
-        binding.rv.post { adapter.add(null) }
+        binding.rv.post { adapter.add(null) }   // add progress loader at bottom
         return true
     }
 
@@ -67,7 +67,12 @@ class MainActivity : AppCompatActivity(), MainContract.View {
      */
     override fun hideProgress(): Boolean {
         if (list.size > 0 && null == list[list.size - 1]) {
-            adapter.remove(list.size - 1)
+            adapter.remove(list.size - 1)       // remove progress loader from bottom
+        }
+        if (binding.srl.isRefreshing) {
+            adapter.clear()                     // clear list
+            binding.srl.isRefreshing = false    // hide pull to refresh
+            model.resetLoadingState = true      // reset loading state and callback
         }
         return  false
     }
@@ -76,11 +81,6 @@ class MainActivity : AppCompatActivity(), MainContract.View {
      * show items and add them to list
      */
     override fun showItems(items: List<User>) {
-        if (binding.srl.isRefreshing) {
-            model.resetLoadingState = true
-            adapter.clear()
-            binding.srl.isRefreshing = false
-        }
         val mappedItems = arrayListOf<UserModel>()
         items.map { mappedItems.add(Mapper.mapToUserModel(it)) }
         adapter.addAll(mappedItems)

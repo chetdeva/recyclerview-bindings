@@ -30,20 +30,20 @@ class MainPresenterImpl(private val view: MainContract.View) : MainContract.Pres
      * create paginator and subscribe to events
      */
     override fun initialize() {
-        currentPage = 1
-        paginator = PublishProcessor.create()
+        currentPage = 1                                         // set page = 1
+        paginator = PublishProcessor.create()                   // create PublishProcessor
 
         val d = paginator.onBackpressureDrop()
-                .doOnNext { loading = view.showProgress() }
-                .concatMap { contract.getUsersFromServer(it) }
+                .doOnNext { loading = view.showProgress() }     // loading = true
+                .concatMap { contract.getUsersFromServer(it) }  // API call
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    loading = view.hideProgress()
-                    view.showItems(it)
-                    currentPage++
+                    loading = view.hideProgress()               // loading = false
+                    view.showItems(it)                          // show items
+                    currentPage++                               // increment page
                 }, {
-                    view.hideProgress()
-                    view.showError(it.localizedMessage)
+                    loading = view.hideProgress()               // loading = false
+                    view.showError(it.localizedMessage)         // show error
                 })
 
         disposables.add(d)
@@ -56,14 +56,14 @@ class MainPresenterImpl(private val view: MainContract.View) : MainContract.Pres
      * @param page current page (not used)
      */
     override fun onLoadMore(page: Int) {
-        if (loading) return
-        paginator.onNext(currentPage)
+        if (loading) return                                     // return if it is still loading
+        paginator.onNext(currentPage)                           // increment page if not loading
     }
 
     /**
      * terminate presenter and dispose subscriptions
      */
     override fun terminate() {
-        disposables.clear()
+        disposables.clear()                                     // clear disposable onDestroy
     }
 }

@@ -1,6 +1,6 @@
 ## RecyclerView Bindings
 
-RecyclerViewBindings provides a wrapper class RecyclerViewScrollCallback which can be used to add Scroll to Bottom and Pull to Refresh capability to your RecyclerView. You can make use of DataBinding to bind it via XML.
+RecyclerViewBindings provides a wrapper class RecyclerViewScrollCallback which can be used to add Scroll to Bottom (Endless Scroll) and Pull to Refresh capability to your RecyclerView. You can make use of DataBinding to bind it via XML.
 
 <img src="./README_images/recyclerview_bindings.gif" width="300" height="534"/>
 
@@ -13,6 +13,7 @@ RecyclerViewBindings provides a wrapper class RecyclerViewScrollCallback which c
             .onScrolledToBottom(onScrolledToBottom)
             .build()
 
+    recyclerView.clearOnScrollListeners()
     recyclerView.addOnScrollListener(callback)
 ```
 
@@ -59,7 +60,7 @@ In your `XML` file
         android:id="@+id/srl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        bind:onPulledToRefresh="@{() -> handler.onPulledToRefresh()}">
+        bind:onPulledToRefresh="@{() -> presenter.initialize()}">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv"
@@ -67,9 +68,11 @@ In your `XML` file
             android:layout_height="match_parent"
             android:background="@color/grey"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-            bind:onScrolledToBottom="@{(page) -> handler.onScrolledToBottom(page)}"
+            bind:onScrolledToBottom="@{(page) -> presenter.onLoadMore(page)}"
             bind:resetLoadingState="@{model.resetLoadingState}"
-            bind:visibleThreshold="@{model.visibleThreshold}" />
+            bind:spaceItemDecoration="@{@dimen/space_very_low}"
+            bind:visibleThreshold="@{model.visibleThreshold}"
+            tools:listitem="@layout/item_main" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 ```
@@ -83,33 +86,34 @@ In your `XML` file
      * create paginator and subscribe to events
      */
     override fun initialize() {
-        currentPage = 1
-        paginator = PublishProcessor.create()
+        currentPage = 1                                         // set page = 1
+        paginator = PublishProcessor.create()                   // create PublishProcessor
 
         val d = paginator.onBackpressureDrop()
-                .doOnNext { view.showProgress() }
-                .concatMap { contract.getUsersFromServer(it) }
+                .doOnNext { loading = view.showProgress() }     // loading = true
+                .concatMap { contract.getUsersFromServer(it) }  // API call
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    view.hideProgress()
-                    view.showItems(it)
-                    currentPage++
+                    loading = view.hideProgress()               // loading = false
+                    view.showItems(it)                          // show items
+                    currentPage++                               // increment page
                 }, {
-                    view.hideProgress()
-                    view.showError(it.localizedMessage)
+                    loading = view.hideProgress()               // loading = false
+                    view.showError(it.localizedMessage)         // show error
                 })
 
         disposables.add(d)
 
-        getUsers(currentPage)
+        onLoadMore(currentPage)
     }
 
     /**
      * called when list is scrolled to its bottom
      * @param page current page (not used)
      */
-    override fun getUsers(page: Int) {
-        paginator.onNext(currentPage)
+    override fun onLoadMore(page: Int) {
+        if (loading) return                                     // return if it is still loading
+        paginator.onNext(currentPage)                           // increment page if not loading
     }
 ```
 

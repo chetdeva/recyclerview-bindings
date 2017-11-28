@@ -26,12 +26,12 @@ class BindingAdapter {
      */
     @BindingAdapter(value = *arrayOf("visibleThreshold", "resetLoadingState", "onScrolledToBottom"), requireAll = false)
     fun setRecyclerViewScrollCallback(recyclerView: RecyclerView, visibleThreshold: Int, resetLoadingState: Boolean,
-                                      onScrolledToBottom: RecyclerViewScrollCallback.OnScrolledListener) {
+                                      onScrolledListener: RecyclerViewScrollCallback.OnScrolledListener) {
 
         val callback = RecyclerViewScrollCallback
                 .Builder(recyclerView.layoutManager)
                 .visibleThreshold(visibleThreshold)
-                .onScrolledListener(onScrolledToBottom)
+                .onScrolledListener(onScrolledListener)
                 .resetLoadingState(resetLoadingState)
                 .build()
 

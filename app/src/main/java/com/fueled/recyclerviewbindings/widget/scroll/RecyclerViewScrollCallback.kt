@@ -56,7 +56,7 @@ class RecyclerViewScrollCallback(private val visibleThreshold: Int, private val 
         // threshold should reflect how many total columns there are too
         if (!loading && lastVisibleItemPosition + visibleThreshold > totalItemCount) {
             currentPage++
-            onScrolledListener!!.onScrolledToBottom(currentPage)
+            onScrolledListener.onScrolledToBottom(currentPage)
             loading = true
         }
     }

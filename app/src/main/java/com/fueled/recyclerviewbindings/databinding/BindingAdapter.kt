@@ -5,9 +5,9 @@ import android.graphics.drawable.Drawable
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.*
 import android.support.v7.widget.helper.ItemTouchHelper
-import com.fueled.recyclerviewbindings.core.RecyclerViewScrollCallback
 import com.fueled.recyclerviewbindings.core.SpaceItemDecoration
 import com.fueled.recyclerviewbindings.widget.drag.DragItemTouchHelperCallback
+import com.fueled.recyclerviewbindings.widget.scroll.RecyclerViewScrollCallback
 import com.fueled.recyclerviewbindings.widget.swipe.SwipeItemTouchHelperCallback
 
 /**
@@ -29,22 +29,15 @@ class BindingAdapter {
                                       onScrolledToBottom: RecyclerViewScrollCallback.OnScrolledListener) {
 
         val callback = RecyclerViewScrollCallback
-                .Builder(getVisibleThreshold(recyclerView.layoutManager, visibleThreshold), recyclerView.layoutManager)
+                .Builder(recyclerView.layoutManager)
+                .visibleThreshold(visibleThreshold)
+                .onScrolledListener(onScrolledToBottom)
                 .resetLoadingState(resetLoadingState)
-                .onScrolledToBottom(onScrolledToBottom)
                 .build()
 
         recyclerView.clearOnScrollListeners()
         recyclerView.addOnScrollListener(callback)
     }
-
-    private fun getVisibleThreshold(layoutManager: RecyclerView.LayoutManager, visibleThreshold: Int) =
-            when (layoutManager) {
-                is LinearLayoutManager -> visibleThreshold
-                is GridLayoutManager -> visibleThreshold * layoutManager.spanCount
-                is StaggeredGridLayoutManager -> visibleThreshold * layoutManager.spanCount
-                else -> visibleThreshold
-            }
 
     /**
      * @param recyclerView  RecyclerView to bind to SpaceItemDecoration

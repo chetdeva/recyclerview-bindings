@@ -22,7 +22,7 @@ class BindingAdapter {
      * @param recyclerView  RecyclerView to bind to RecyclerViewScrollCallback
      * @param visibleThreshold  The minimum number of items to have below your current scroll position before loading more.
      * @param resetLoadingState  Reset endless scroll listener when performing a new search
-     * @param onScrolledToBottom    OnScrolledListener for RecyclerView scrolled
+     * @param onScrolledListener    OnScrolledListener for RecyclerView scrolled
      */
     @BindingAdapter(value = *arrayOf("visibleThreshold", "resetLoadingState", "onScrolledToBottom"), requireAll = false)
     fun setRecyclerViewScrollCallback(recyclerView: RecyclerView, visibleThreshold: Int, resetLoadingState: Boolean,

@@ -2,6 +2,7 @@ package com.fueled.recyclerviewbindings.mvp
 
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Predicate
 import io.reactivex.processors.PublishProcessor
 
 /**
@@ -34,6 +35,7 @@ class MainPresenterImpl(private val view: MainContract.View) : MainContract.Pres
         paginator = PublishProcessor.create()                   // create PublishProcessor
 
         val d = paginator.onBackpressureDrop()
+                .filter { !loading }
                 .doOnNext { loading = view.showProgress() }     // loading = true
                 .concatMap { contract.getUsersFromServer(it) }  // API call
                 .observeOn(AndroidSchedulers.mainThread())
@@ -56,7 +58,6 @@ class MainPresenterImpl(private val view: MainContract.View) : MainContract.Pres
      * @param page current page (not used)
      */
     override fun onLoadMore(page: Int) {
-        if (loading) return                                     // return if it is still loading
         paginator.onNext(currentPage)                           // increment page if not loading
     }
 

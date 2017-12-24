@@ -90,6 +90,7 @@ In your `XML` file
         paginator = PublishProcessor.create()                   // create PublishProcessor
 
         val d = paginator.onBackpressureDrop()
+                .filter { !loading }                            // return if it is still loading
                 .doOnNext { loading = view.showProgress() }     // loading = true
                 .concatMap { contract.getUsersFromServer(it) }  // API call
                 .observeOn(AndroidSchedulers.mainThread())
@@ -112,7 +113,6 @@ In your `XML` file
      * @param page current page (not used)
      */
     override fun onLoadMore(page: Int) {
-        if (loading) return                                     // return if it is still loading
         paginator.onNext(currentPage)                           // increment page if not loading
     }
 ```

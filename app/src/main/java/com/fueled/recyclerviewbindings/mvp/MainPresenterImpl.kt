@@ -35,7 +35,7 @@ class MainPresenterImpl(private val view: MainContract.View) : MainContract.Pres
         paginator = PublishProcessor.create()                   // create PublishProcessor
 
         val d = paginator.onBackpressureDrop()
-                .filter { !loading }
+                .filter { !loading }                            // return if it is still loading
                 .doOnNext { loading = view.showProgress() }     // loading = true
                 .concatMap { contract.getUsersFromServer(it) }  // API call
                 .observeOn(AndroidSchedulers.mainThread())

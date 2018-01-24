@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     private lateinit var presenter: MainContract.Presenter
 
     private lateinit var adapter: RVAdapter
-    private val list = arrayListOf<UserModel?>()
+    private val list = arrayListOf<UserModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
      * show progress loader at bottom of list
      */
     override fun showProgress(): Boolean {
-        binding.rv.post { adapter.add(null) }   // add progress loader at bottom
+        binding.rv.post { adapter.add(UserModel().apply { id = -1 }) }   // add progress loader (UserModel with id = -1) at bottom
         return true
     }
 
@@ -66,8 +66,8 @@ class MainActivity : AppCompatActivity(), MainContract.View {
      * if list is refreshing, clear the list
      */
     override fun hideProgress(): Boolean {
-        if (list.size > 0 && null == list[list.size - 1]) {
-            adapter.remove(list.size - 1)       // remove progress loader from bottom
+        if (list.size > 0 && list[list.size - 1].id == -1) {
+            adapter.remove(list.size - 1)                       // remove progress loader (UserModel with id = -1) from bottom
         }
         if (binding.srl.isRefreshing) {
             adapter.clear()                     // clear list

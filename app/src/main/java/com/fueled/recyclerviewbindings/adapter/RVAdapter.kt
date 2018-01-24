@@ -15,11 +15,11 @@ import com.fueled.recyclerviewbindings.util.inflate
  * @author chetansachdeva on 04/06/17
  */
 
-class RVAdapter(private val list: MutableList<UserModel?>, private val listener: (UserModel?) -> Unit) :
+class RVAdapter(private val list: MutableList<UserModel>, private val listener: (UserModel) -> Unit) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemViewType(position: Int): Int {
-        return if (null == list[position]) ITEM_PROGRESS
+        return if (list[position].id == -1) ITEM_PROGRESS
         else super.getItemViewType(position)
     }
 
@@ -30,7 +30,7 @@ class RVAdapter(private val list: MutableList<UserModel?>, private val listener:
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is VHUser) holder.bind(list[position], listener)
-        else if (holder is VHProgress) holder.bind(true)
+        else (holder as VHProgress).bind(true)
     }
 
     override fun getItemCount() = list.size
@@ -46,7 +46,7 @@ class RVAdapter(private val list: MutableList<UserModel?>, private val listener:
     /**
      * add an item and notify
      */
-    fun add(user: UserModel?) {
+    fun add(user: UserModel) {
         list.add(user)
         notifyItemInserted(list.size - 1)
     }
@@ -71,8 +71,8 @@ class RVAdapter(private val list: MutableList<UserModel?>, private val listener:
      * UserModel ViewHolder
      */
     internal class VHUser(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val binding: ItemMainBinding = DataBindingUtil.bind(itemView)
-        fun bind(user: UserModel?, listener: (UserModel?) -> Unit) {
+        private val binding: ItemMainBinding = DataBindingUtil.bind(itemView)
+        fun bind(user: UserModel, listener: (UserModel) -> Unit) {
             binding.user = user
             itemView.setOnClickListener { listener(user) }
         }
@@ -82,7 +82,7 @@ class RVAdapter(private val list: MutableList<UserModel?>, private val listener:
      * Progress ViewHolder
      */
     internal class VHProgress(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val binding: ItemProgressBinding = DataBindingUtil.bind(itemView)
+        private val binding: ItemProgressBinding = DataBindingUtil.bind(itemView)
         fun bind(isIndeterminate: Boolean) {
             binding.pb.isIndeterminate = isIndeterminate
         }

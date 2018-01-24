@@ -4,6 +4,7 @@ import com.fueled.recyclerviewbindings.entity.User
 import java.util.concurrent.TimeUnit
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 /**
  * Copyright (c) 2017 Fueled. All rights reserved.
@@ -18,8 +19,8 @@ class MainContractImpl : MainContract {
      */
     override fun getUsersFromServer(page: Int): Flowable<List<User>> {
         return Flowable.just(page)
+                .delay(MainContract.LOAD_DELAY_IN_MILLISECONDS, TimeUnit.MILLISECONDS, Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .delay(MainContract.LOAD_DELAY_IN_MILLISECONDS, TimeUnit.MILLISECONDS)
                 .map { p -> getItems(p) }
     }
 

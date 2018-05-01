@@ -71,7 +71,7 @@ class RVAdapter(private val list: MutableList<UserModel>, private val listener: 
      * UserModel ViewHolder
      */
     internal class VHUser(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val binding: ItemMainBinding = DataBindingUtil.bind(itemView)
+        private val binding: ItemMainBinding = DataBindingUtil.bind(itemView)!!
         fun bind(user: UserModel, listener: (UserModel) -> Unit) {
             binding.user = user
             itemView.setOnClickListener { listener(user) }
@@ -82,7 +82,7 @@ class RVAdapter(private val list: MutableList<UserModel>, private val listener: 
      * Progress ViewHolder
      */
     internal class VHProgress(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val binding: ItemProgressBinding = DataBindingUtil.bind(itemView)
+        private val binding: ItemProgressBinding = DataBindingUtil.bind(itemView)!!
         fun bind(isIndeterminate: Boolean) {
             binding.pb.isIndeterminate = isIndeterminate
         }
